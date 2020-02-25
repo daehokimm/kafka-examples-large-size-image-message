@@ -1,0 +1,7 @@
+/.idea/
+/image-consumer/target/
+/image-producer/target/
+/image-consumer/image-consumer.iml
+/image-producer/image-producer.iml
+/image-consumer/images/
+.DS_Store
