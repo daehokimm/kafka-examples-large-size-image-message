@@ -3,5 +3,5 @@
 /image-producer/target/
 /image-consumer/image-consumer.iml
 /image-producer/image-producer.iml
-/image-consumer/images/
+/image-consumer/images/*.jpg
 .DS_Store
