@@ -17,6 +17,7 @@ public class ImageProducer {
 	private static final String TOPIC_NAME = "chopped-image";
 	private static final String IMAGE_NAME = "over_max_size.jpg";		// or `small_size.jpg`
 	private static final String IMAGE_DIR = "images/";
+	private static final int IMAGE_SEGMENT_SIZE = 500_000;
 
 	public static void main(String[] args) throws IOException, ExecutionException, InterruptedException {
 
@@ -36,18 +37,17 @@ public class ImageProducer {
 
 		// chop the large size image file
 		// to small images that under `request.max.size`
-		int segmentSize = 1000000;
 		long ts = System.currentTimeMillis();
-		int totalParts = (bytes.length / segmentSize) + 1;
+		int totalParts = (bytes.length / IMAGE_SEGMENT_SIZE) + 1;
 		int partNum = 0;
 		List<ChoppedImage> choppedImages = new ArrayList<>();
-		while (partNum * segmentSize < bytes.length) {
-			int byteSize = segmentSize;
-			if ((partNum + 1) * segmentSize > bytes.length)        // for last parts
-				byteSize = bytes.length - (partNum * segmentSize);
+		while (partNum * IMAGE_SEGMENT_SIZE < bytes.length) {
+			int byteSize = IMAGE_SEGMENT_SIZE;
+			if ((partNum + 1) * IMAGE_SEGMENT_SIZE > bytes.length)        // for last parts
+				byteSize = bytes.length - (partNum * IMAGE_SEGMENT_SIZE);
 
 			byte[] chopped = new byte[byteSize];
-			System.arraycopy(bytes, partNum * segmentSize, chopped, 0, byteSize);
+			System.arraycopy(bytes, partNum * IMAGE_SEGMENT_SIZE, chopped, 0, byteSize);
 			choppedImages.add(new ChoppedImage(IMAGE_NAME, ts, totalParts, partNum, chopped));
 
 			partNum++;
