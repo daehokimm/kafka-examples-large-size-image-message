@@ -20,11 +20,11 @@ public class ImageConsumer {
 		// broker configure
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringDeserializer");
+		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.LongDeserializer");
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "me.daehokimm.ChoppedImageDeserializer");		// custom deserializer
 		props.put(ConsumerConfig.GROUP_ID_CONFIG, "chopped-image");
 
-		Consumer<String, ChoppedImage> consumer = new KafkaConsumer<>(props);
+		Consumer<Long, ChoppedImage> consumer = new KafkaConsumer<>(props);
 		consumer.subscribe(Collections.singleton(TOPIC_NAME));
 		Map<String, List<ChoppedImage>> dictionary = new HashMap<>();		// for hold image segments to merge
 		while (true) {		// infinite loop

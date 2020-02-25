@@ -24,7 +24,7 @@ public class ImageProducer {
 		// broker configure
 		Map<String, Object> props = new HashMap<>();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.LongSerializer");
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "me.daehokimm.ChoppedImageSerializer");		// custom serializer`
 
 		// read file & convert to byte[]
@@ -54,9 +54,9 @@ public class ImageProducer {
 		}
 
 		// initialize producer & send records
-		Producer<String, ChoppedImage> producer = new KafkaProducer<>(props);
+		Producer<Long, ChoppedImage> producer = new KafkaProducer<>(props);
 		for (ChoppedImage choppedImage : choppedImages) {
-			ProducerRecord<String, ChoppedImage> record = new ProducerRecord<>(TOPIC_NAME, null, choppedImage);
+			ProducerRecord<Long, ChoppedImage> record = new ProducerRecord<>(TOPIC_NAME, choppedImage.getTimestamp(), choppedImage);
 			RecordMetadata recordMetadata = producer.send(record).get();
 			printResult(recordMetadata);
 		}
