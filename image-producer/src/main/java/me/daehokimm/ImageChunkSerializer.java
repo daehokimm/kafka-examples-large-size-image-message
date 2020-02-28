@@ -5,13 +5,13 @@ import org.apache.kafka.common.serialization.Serializer;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-public class ChoppedImageSerializer implements Serializer<ChoppedImage> {
+public class ImageChunkSerializer implements Serializer<ImageChunk> {
 	@Override
 	public void configure(Map<String, ?> configs, boolean isKey) {
 	}
 
 	@Override
-	public byte[] serialize(String topic, ChoppedImage data) {
+	public byte[] serialize(String topic, ImageChunk data) {
 		if (data == null)
 			return null;
 

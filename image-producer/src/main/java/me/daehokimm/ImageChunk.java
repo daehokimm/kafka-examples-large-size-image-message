@@ -3,14 +3,14 @@ package me.daehokimm;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ChoppedImage {
+public class ImageChunk {
 	private String imageName;
 	private long timestamp;
 	private int totalPart;
 	private int partNum;
 	private byte[] bytes;
 
-	public ChoppedImage(String imageName, long timestamp, int totalPart, int partNum, byte[] bytes) {
+	public ImageChunk(String imageName, long timestamp, int totalPart, int partNum, byte[] bytes) {
 		this.imageName = imageName;
 		this.timestamp = timestamp;
 		this.totalPart = totalPart;
@@ -42,7 +42,7 @@ public class ChoppedImage {
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
-		ChoppedImage that = (ChoppedImage) o;
+		ImageChunk that = (ImageChunk) o;
 		return timestamp == that.timestamp &&
 				totalPart == that.totalPart &&
 				partNum == that.partNum &&

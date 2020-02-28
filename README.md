@@ -7,14 +7,14 @@ This example project is about producer that send large size image by chopping to
 
 ### 1. Set Environments
 
-First of all, create `chopped-image` topic that used to produce and consume.
+First of all, create `chucked-image` topic that used to produce and consume.
 you should set the options {`bootstrap-server`, `partitions`, `replication-factor`} according to your environment.
 
 ```shell script
 $ kafka-topics \
 --bootstrap-server localhost:9092 \
 --create \
---topic chopped-image \
+--topic chucked-image \
 --partitions 1 \
 --replication-factor 1
 ```

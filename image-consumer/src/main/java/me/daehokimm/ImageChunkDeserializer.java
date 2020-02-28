@@ -5,14 +5,14 @@ import org.apache.kafka.common.serialization.Deserializer;
 import java.nio.ByteBuffer;
 import java.util.Map;
 
-public class ChoppedImageDeserializer implements Deserializer<ChoppedImage> {
+public class ImageChunkDeserializer implements Deserializer<ImageChunk> {
 	@Override
 	public void configure(Map<String, ?> configs, boolean isKey) {
 
 	}
 
 	@Override
-	public ChoppedImage deserialize(String topic, byte[] data) {
+	public ImageChunk deserialize(String topic, byte[] data) {
 		if (data == null)
 			return null;
 
@@ -30,7 +30,7 @@ public class ChoppedImageDeserializer implements Deserializer<ChoppedImage> {
 		byte[] bytes = new byte[byteSize];
 		buffer.get(bytes);
 
-		return new ChoppedImage(imageName, ts, totalParts, partNum, bytes);
+		return new ImageChunk(imageName, ts, totalParts, partNum, bytes);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import java.util.*;
 
 public class ImageConsumer {
 
-	private final static String TOPIC_NAME = "chopped-image";
+	private final static String TOPIC_NAME = "chucked-image";
 
 	public static void main(String[] args) throws IOException {
 
@@ -21,12 +21,12 @@ public class ImageConsumer {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.LongDeserializer");
-		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "me.daehokimm.ChoppedImageDeserializer");		// custom deserializer
-		props.put(ConsumerConfig.GROUP_ID_CONFIG, "chopped-image");
+		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, "me.daehokimm.ImageChunkDeserializer");		// custom deserializer
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, "chucked-image");
 
-		Consumer<Long, ChoppedImage> consumer = new KafkaConsumer<>(props);
+		Consumer<Long, ImageChunk> consumer = new KafkaConsumer<>(props);
 		consumer.subscribe(Collections.singleton(TOPIC_NAME));
-		Map<String, List<ChoppedImage>> dictionary = new HashMap<>();		// for hold image segments to merge
+		Map<String, List<ImageChunk>> dictionary = new HashMap<>();		// for hold image segments to merge
 		while (true) {		// infinite loop
 			// subscribe topic
 			consumer
@@ -45,28 +45,28 @@ public class ImageConsumer {
 		}
 	}
 
-	private static void MergeImageSegments(Map<String, List<ChoppedImage>> dictionary) throws IOException {
+	private static void MergeImageSegments(Map<String, List<ImageChunk>> dictionary) throws IOException {
 		for(String name : dictionary.keySet()) {
-			List<ChoppedImage> choppedImages = dictionary.get(name);
-			int totalPart = choppedImages.get(0).getTotalPart();
-			if (totalPart != choppedImages.size())
+			List<ImageChunk> imageChunks = dictionary.get(name);
+			int totalPart = imageChunks.get(0).getTotalPart();
+			if (totalPart != imageChunks.size())
 				continue;
 
 			// sort by partNum
-			choppedImages.sort(Comparator.comparingInt(ChoppedImage::getPartNum));
-			int totalByteSize = choppedImages.stream().mapToInt(choppedImage -> choppedImage.getBytes().length).sum();
+			imageChunks.sort(Comparator.comparingInt(ImageChunk::getPartNum));
+			int totalByteSize = imageChunks.stream().mapToInt(imageChunk -> imageChunk.getBytes().length).sum();
 			byte[] bytes = new byte[totalByteSize];
 
 			// merge bytes
 			int offset = 0;
-			for (ChoppedImage choppedImage : choppedImages) {
-				byte[] imageBytes = choppedImage.getBytes();
+			for (ImageChunk imageChunk : imageChunks) {
+				byte[] imageBytes = imageChunk.getBytes();
 				System.arraycopy(imageBytes, 0, bytes, offset, imageBytes.length);
 				offset += imageBytes.length;
 			}
 
 			// write file
-			String imageName = choppedImages.get(0).getImageName();
+			String imageName = imageChunks.get(0).getImageName();
 			OutputStream out = new FileOutputStream(new File("images/" + imageName));
 			out.write(bytes);
 			out.close();
