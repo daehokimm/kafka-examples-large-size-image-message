@@ -3,6 +3,8 @@
 When Kafka producer send message that has size over `max.request.size`, the message can't send at once.
 This example project is about producer that send large size image by chopping to segments, and consumer that merge the segments to original image.
 
+[Docs(KOR) link](https://always-kimkim.tistory.com/entry/kafka-develop-examples-large-size-image-message)
+
 ## Getting started 
 
 ### 1. Set Environments
