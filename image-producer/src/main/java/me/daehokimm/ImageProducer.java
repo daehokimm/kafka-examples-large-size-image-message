@@ -6,16 +6,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 public class ImageProducer {
 
 	private static final String TOPIC_NAME = "chucked-image";
-	private static final String IMAGE_NAME = "over_max_size.jpg";		// or `small_size.jpg`
+	private static final String IMAGE_NAME = "over_max_size.jpg";        // or `small_size.jpg`
 	private static final String IMAGE_DIR = "images/";
 	private static final int IMAGE_SEGMENT_SIZE = 500_000;
 
@@ -24,8 +21,8 @@ public class ImageProducer {
 		// broker configure
 		Map<String, Object> props = new HashMap<>();
 		props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.LongSerializer");
-		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "me.daehokimm.ImageChunkSerializer");		// custom serializer`
+		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.UUIDSerializer");
+		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "me.daehokimm.ImageChunkSerializer");        // custom serializer`
 
 		// read file & convert to byte[]
 		Path path = Paths.get(IMAGE_DIR + IMAGE_NAME);
@@ -54,9 +51,10 @@ public class ImageProducer {
 		}
 
 		// initialize producer & send records
-		Producer<Long, ImageChunk> producer = new KafkaProducer<>(props);
+		Producer<UUID, ImageChunk> producer = new KafkaProducer<>(props);
+		UUID uuid = UUID.randomUUID();
 		for (ImageChunk imageChunk : imageChunks) {
-			ProducerRecord<Long, ImageChunk> record = new ProducerRecord<>(TOPIC_NAME, imageChunk.getTimestamp(), imageChunk);
+			ProducerRecord<UUID, ImageChunk> record = new ProducerRecord<>(TOPIC_NAME, uuid, imageChunk);
 			RecordMetadata recordMetadata = producer.send(record).get();
 			printResult(recordMetadata);
 		}
